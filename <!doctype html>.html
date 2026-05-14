@@ -1,0 +1,1191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Python Fundamentals Session 2</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #5d667a;
+      --line: #d8ddeb;
+      --brand: #3057d5;
+      --brand-dark: #1f3fa6;
+      --accent: #f3b13f;
+      --success: #1b8754;
+      --danger: #b42318;
+      --code-bg: #111827;
+      --code-ink: #e8eefc;
+      --soft-blue: #f0f4ff;
+      --soft-yellow: #fff8e9;
+      --soft-green: #eefaf4;
+      --soft-purple: #f5f1ff;
+      --fac-bg: #fff7e6;
+      --fac-border: #efc66f;
+      --shadow: 0 14px 30px rgba(21, 34, 66, 0.10);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.5; }
+    a { color: inherit; }
+    .site-header { background: linear-gradient(135deg, #182848 0%, #3057d5 100%); color: white; padding: 44px 24px; }
+    .header-inner { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; }
+    h1 { font-size: clamp(2rem, 4vw, 4rem); line-height: 1.02; margin: 0; letter-spacing: -0.04em; }
+    h2 { font-size: clamp(1.35rem, 2.2vw, 2rem); margin: 0 0 12px; letter-spacing: -0.02em; }
+    h3 { margin: 0 0 8px; }
+    p { margin-top: 0; }
+    .subtitle { max-width: 780px; font-size: 1.12rem; color: rgba(255,255,255,0.88); margin: 16px 0 0; }
+    .eyebrow { margin: 0 0 8px; text-transform: uppercase; letter-spacing: .12em; font-weight: 750; color: var(--accent); font-size: .78rem; }
+    .header-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+    .button { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--line); background: white; color: var(--ink); font-weight: 750; text-decoration: none; cursor: pointer; box-shadow: 0 2px 8px rgba(21, 34, 66, 0.08); font: inherit; }
+    .button.primary { background: var(--accent); color: #1a2438; border-color: transparent; }
+    .button.secondary { background: var(--soft-blue); color: var(--brand-dark); border-color: #cbd8ff; }
+    .button.ghost { background: rgba(255,255,255,0.12); color: white; border-color: rgba(255,255,255,0.35); }
+    .button.small { min-height: 36px; padding: 8px 12px; font-size: .9rem; }
+    .button:hover, .button:focus { transform: translateY(-1px); }
+    main { max-width: 1180px; margin: 0 auto; padding: 26px 20px 56px; }
+    .panel, .concept-card, .exercise-card { background: var(--panel); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow); padding: 24px; margin-bottom: 22px; }
+    .concept-card, .exercise-card { scroll-margin-top: 24px; }
+    .hero-grid, .wrap-grid, .two-col { display: grid; grid-template-columns: 1.5fr 1fr; gap: 22px; }
+    .steps { padding-left: 1.2rem; margin: 0; }
+    .steps li { margin: 10px 0; }
+    .rhythm-card, .callout { background: var(--soft-blue); border: 1px solid #cbd8ff; border-radius: 18px; padding: 18px; }
+    .flow { margin-top: 12px; padding: 14px; border-radius: 14px; background: white; font-weight: 850; text-align: center; color: var(--brand-dark); }
+    .toolbar { display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: center; }
+    .hint { margin: 4px 0 0; color: var(--muted); font-size: .92rem; }
+    .progress-label { font-weight: 800; margin-bottom: 8px; }
+    .progress-bar { height: 12px; background: #e7eaf3; border-radius: 999px; overflow: hidden; }
+    #progressFill { height: 100%; width: 0%; background: var(--success); transition: width .2s ease; }
+    .agenda-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+    .agenda-item { display: block; text-decoration: none; border: 1px solid var(--line); border-radius: 16px; padding: 14px; background: #fbfcff; }
+    .agenda-item strong { display: block; margin-bottom: 4px; }
+    .agenda-item span { color: var(--muted); font-size: .9rem; }
+    .tag { display: inline-flex; align-items: center; border-radius: 999px; padding: 3px 8px; font-size: .74rem; font-weight: 850; margin-bottom: 7px; background: var(--soft-blue); color: var(--brand-dark); }
+    .tag.exercise { background: var(--soft-green); color: #0b6840; }
+    .section-list { display: grid; gap: 22px; }
+    .section-header { display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: start; }
+    .goal, .summary { color: var(--muted); margin: 0; }
+    .meta-pill { border-radius: 999px; padding: 8px 12px; background: #eef2ff; color: var(--brand-dark); font-weight: 800; white-space: nowrap; }
+    .concept-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 18px; margin-top: 18px; }
+    .key-points, .common-list, .checklist { margin: 0; padding-left: 1.2rem; }
+    .key-points li, .common-list li { margin: 6px 0; }
+    .callout-box { margin-top: 16px; background: var(--soft-purple); border: 1px solid #d9ccff; border-radius: 16px; padding: 14px 16px; }
+    .example-stack { display: grid; gap: 14px; }
+    .code-card { border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: #fbfcff; }
+    .code-card-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+    .code-card-title { font-weight: 850; }
+    .predict-box, .task-box { border-radius: 16px; padding: 14px 16px; margin: 18px 0; }
+    .predict-box { background: var(--soft-yellow); border: 1px solid #f3d49a; }
+    .task-box { background: #f7f9ff; border: 1px solid #cbd8ff; }
+    .button-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 16px 0; }
+    .done-check { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; color: var(--success); }
+    .done-check input { inline-size: 20px; block-size: 20px; }
+    details { margin: 14px 0; }
+    summary { font-weight: 850; cursor: pointer; margin-bottom: 10px; }
+    pre { margin: 0; background: var(--code-bg); color: var(--code-ink); border-radius: 0; padding: 18px; overflow: auto; tab-size: 4; font-size: .94rem; line-height: 1.55; }
+    details pre { border-radius: 18px; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    .facilitator-only { display: none; }
+    body.facilitator-unlocked .facilitator-only { display: block; }
+    .facilitator-panel { border: 2px solid var(--fac-border); background: var(--fac-bg); border-radius: 18px; padding: 18px; margin-top: 18px; }
+    .solution-box { margin-top: 14px; }
+    .facilitator-banner { display: none; position: sticky; top: 0; z-index: 10; background: #182848; color: white; padding: 10px 20px; box-shadow: 0 8px 16px rgba(21, 34, 66, 0.18); }
+    body.facilitator-unlocked .facilitator-banner { display: block; }
+    .facilitator-banner-inner { max-width: 1180px; margin: 0 auto; display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.62); z-index: 50; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .modal-backdrop.show { display: flex; }
+    .modal { width: min(540px, 100%); border-radius: 24px; background: white; padding: 24px; box-shadow: 0 24px 80px rgba(0,0,0,0.25); }
+    .modal-form { display: grid; gap: 12px; margin-top: 16px; }
+    .modal-form label { font-weight: 800; }
+    .modal-form input { min-height: 46px; border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; font: inherit; }
+    .modal-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; margin-top: 6px; }
+    .error { color: var(--danger); font-weight: 800; min-height: 1.2em; }
+    .toast { position: fixed; right: 18px; bottom: 18px; padding: 12px 16px; border-radius: 999px; background: #172033; color: white; box-shadow: var(--shadow); font-weight: 800; opacity: 0; transform: translateY(8px); transition: all .2s ease; z-index: 60; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .wrapup ul { margin-top: 0; }
+    .small-muted { color: var(--muted); font-size: .92rem; }
+    @media (max-width: 900px) { .concept-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 760px) {
+      .header-inner, .hero-grid, .toolbar, .section-header, .wrap-grid, .two-col { grid-template-columns: 1fr; }
+      .header-actions { justify-content: flex-start; }
+      .toolbar { position: static; }
+      .button-row { align-items: stretch; }
+      .button, .done-check { width: 100%; }
+      .modal-actions { justify-content: stretch; }
+    }
+    @media print {
+      .site-header, .toolbar, .button-row, .facilitator-banner, .modal-backdrop { display: none !important; }
+      body { background: white; }
+      .panel, .concept-card, .exercise-card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="facilitator-banner" aria-live="polite">
+    <div class="facilitator-banner-inner">
+      <strong>Facilitator mode is on. Extra notes and solution blocks are visible.</strong>
+      <button id="lockFacilitator" class="button small" type="button">Lock facilitator mode</button>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div>
+        <p class="eyebrow">Beginner Python Workshop</p>
+        <h1>Python Fundamentals: Session 2</h1>
+        <p class="subtitle">A guided page for Session 2 concepts and deck-aligned browser exercises, starting with a quick recap of Session 1 fundamentals.</p>
+      </div>
+      <div class="header-actions">
+        <a class="button primary" href="#start">Start session</a>
+        <a class="button" target="_blank" rel="noopener" href="https://www.pythoncompiler.io/">Open PythonCompiler.io</a>
+        <button id="openFacilitator" class="button ghost" type="button">Facilitator</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="start" class="panel hero-grid">
+      <div>
+        <h2>Session 1 recap</h2>
+        <p>Last session built the foundation we will use today. The goal of this recap is not to relearn everything from scratch. It is to bring the key ideas back into working memory before we use them inside functions.</p>
+        <ul class="steps">
+          <li><strong>Console and print:</strong> Python runs code from top to bottom, and <code>print()</code> shows output in the console.</li>
+          <li><strong>Variables:</strong> Variables store values so they can be reused, updated, and printed later.</li>
+          <li><strong>Math:</strong> Python can calculate with operators like <code>+</code>, <code>-</code>, <code>*</code>, and <code>/</code>.</li>
+          <li><strong>Comments:</strong> Comments are ignored by Python and help humans understand the code.</li>
+          <li><strong>Data types:</strong> Strings, numbers, booleans, and <code>None</code> behave differently.</li>
+          <li><strong>Strings:</strong> F-strings and concatenation let text include variable values.</li>
+          <li><strong>Functions:</strong> A function is reusable code with a name, optional inputs, an indented body, and often a return value.</li>
+        </ul>
+      </div>
+      <aside class="rhythm-card">
+        <h3>Carry this into Session 2</h3>
+        <p>Today builds on those basics by using functions more deliberately: calling them, passing values in, returning values out, and using them to organize calculations.</p>
+        <div class="flow">Variables + Math + Return Values = Useful Functions</div>
+      </aside>
+    </section>
+
+    <section class="panel facilitator-only" aria-label="Facilitator overview">
+      <h2>Facilitator overview</h2>
+      <div class="two-col">
+        <div>
+          <h3>Recommended flow</h3>
+          <ol class="steps">
+            <li>Teach each concept card briefly before the matching exercise.</li>
+            <li>Use demo code when the idea needs to be seen, not only described.</li>
+            <li>Ask for a prediction before running exercise code.</li>
+            <li>Keep exercises short and use the debriefs to lock in the idea.</li>
+          </ol>
+        </div>
+        <div>
+          <h3>Timing target</h3>
+          <p>For a 60-75 minute session, keep the deck-aligned exercises in order. If the class is slower, preserve the concept explanations and shorten hands-on time by solving the last few together.</p>
+          <p class="small-muted">The passphrase gate is intentionally lightweight. It keeps the default view focused, but the content is not meant to be secure.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel toolbar" aria-label="Session progress">
+      <div class="progress-wrap">
+        <div class="progress-label"><span id="progressText">0 of 0 exercises completed</span></div>
+        <div class="progress-bar"><div id="progressFill"></div></div>
+        <p class="hint">Progress is saved in this browser only. Concept sections do not count toward completion.</p>
+      </div>
+      <button id="resetProgress" class="button small" type="button">Reset progress</button>
+    </section>
+
+    <section class="panel agenda">
+      <h2>Session map</h2>
+      <div id="agendaGrid" class="agenda-grid"></div>
+    </section>
+
+    <section id="sections" class="section-list" aria-live="polite"></section>
+
+    <section class="panel wrapup">
+      <h2>Wrap-up</h2>
+      <div class="wrap-grid">
+        <div>
+          <h3>Reflection</h3>
+          <p>Choose one prompt to answer in Teams chat or in your notes:</p>
+          <ul>
+            <li>One thing I learned today was...</li>
+            <li>One thing still confusing me is...</li>
+            <li>I want more practice with...</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Keep practicing</h3>
+          <p>Rerun any exercise and change the numbers, names, or inputs. Small edits are the fastest way to test whether a concept really stuck.</p>
+          <div class="facilitator-only facilitator-panel">
+            <h3>Facilitator closeout</h3>
+            <p>Ask for one final chat response: <strong>functions are useful because...</strong>. Listen for answers like reuse, less repetition, clearer code, and easier testing.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="facilitatorModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <h2 id="modalTitle">Enable facilitator content</h2>
+      <p>Enter the passphrase to show facilitator notes and solution blocks on this same page.</p>
+      <form id="facilitatorForm" class="modal-form">
+        <label for="facilitatorPassphrase">Passphrase</label>
+        <input id="facilitatorPassphrase" type="password" autocomplete="off" />
+        <div id="facilitatorError" class="error" aria-live="polite"></div>
+        <div class="modal-actions">
+          <button id="cancelFacilitator" class="button" type="button">Stay on attendee view</button>
+          <button class="button primary" type="submit">Unlock</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const FACILITATOR_PASSPHRASE = 'facilitator';
+    const sections = [
+    {
+        "type": "concept",
+        "id": "session-1-recap",
+        "title": "Session 1 recap",
+        "topic": "Python basics we are building on",
+        "time": "6 min",
+        "summary": "Before moving deeper into functions, review the core ideas from last session: console output, variables, math, comments, types, strings, None, and the first look at reusable functions.",
+        "key_points": [
+            "Code runs in order from top to bottom.",
+            "print() sends information to the console so we can see what happened.",
+            "Variables store values and can be reassigned to a new value.",
+            "Python uses data types such as str, int, float, bool, and NoneType.",
+            "F-strings let variable values appear inside readable text.",
+            "Functions let us name a reusable block of code and call it with different inputs."
+        ],
+        "callout": "Session 2 starts from that last idea: functions are reusable blocks of code, and return values let those blocks give results back to the rest of the program.",
+        "examples": [
+            {
+                "title": "Variables, types, and f-strings",
+                "code": "product = \"Laptop\"\nprice = 999\nis_in_stock = True\n\nprint(f\"{product} costs {price} dollars.\")\nprint(\"Price type:\", type(price).__name__)\nprint(\"In stock?\", is_in_stock)\n"
+            },
+            {
+                "title": "Function refresher from last session",
+                "code": "def area_of_circle(radius):\n    pi = 3.14\n    area = pi * radius * radius\n    return area\n\nstore_radius = 5.0\ndelivery_radius = 10.0\n\nstore_area = area_of_circle(store_radius)\ndelivery_area = area_of_circle(delivery_radius)\n\nprint(\"Store area:\", store_area)\nprint(\"Delivery area:\", delivery_area)\n"
+            }
+        ],
+        "facilitator": {
+            "talking_points": [
+                "Use this as a bridge from the previous session, not a full reteach.",
+                "Connect each recap item to something that shows up later today: variables hold inputs, math creates results, print shows output, and return gives a value back.",
+                "The most important handoff is the final function example, because Session 2 goes deeper on function calls, parameters, and return values."
+            ],
+            "transition": "Move from the recap into why functions matter: reusable logic avoids repeated code."
+        }
+    },
+    {
+        "type": "concept",
+        "id": "why-functions",
+        "title": "Why functions?",
+        "topic": "Reuse code instead of copying it",
+        "time": "5 min",
+        "summary": "Functions let you write code once and reuse it anywhere. That keeps code cleaner, easier to change, and less error-prone.",
+        "key_points": [
+            "Without functions, repeated logic gets copied in many places.",
+            "Copied code is harder to update because every copy has to be changed.",
+            "A function gives repeated logic a name.",
+            "After a function is defined, the same logic can be reused with different inputs."
+        ],
+        "callout": "A good function usually represents one useful idea: calculate tax, calculate shipping, format a title, check a budget, or process an order.",
+        "examples": [
+            {
+                "title": "The copy-paste problem",
+                "code": "price = 49.99\ntax1 = price * 0.08\n\nprice2 = 29.99\ntax2 = price2 * 0.08\n\nprice3 = 99.99\ntax3 = price3 * 0.08\n\n# What if we need to do this for thousands of products?\n"
+            },
+            {
+                "title": "The reusable function solution",
+                "code": "def calculate_tax(price):\n    rate = 0.08\n    result = price * rate\n    return result\n\ntax1 = calculate_tax(49.99)\ntax2 = calculate_tax(29.99)\ntax3 = calculate_tax(99.99)\n\nprint(tax1)\nprint(tax2)\nprint(tax3)\n"
+            }
+        ],
+        "facilitator": {
+            "talking_points": [
+                "Do not start with syntax. Start with the pain: repeated code.",
+                "Point out that the tax rate only appears once in the function version.",
+                "The first goal is for attendees to understand the purpose of functions before memorizing the syntax."
+            ],
+            "transition": "Now that the reason is clear, break down the parts of a function."
+        }
+    },
+    {
+        "type": "concept",
+        "id": "function-anatomy",
+        "title": "Anatomy of a function",
+        "topic": "Definition, name, parameter, body, return",
+        "time": "7 min",
+        "summary": "A function has a few important parts: the def keyword, a name, optional inputs called parameters, an indented body, and usually a return value.",
+        "key_points": [
+            "def starts the function definition.",
+            "calculate_tax is the function name.",
+            "price is a parameter, which means it is an input placeholder.",
+            "Indented lines are the function body.",
+            "return sends a result back to the code that called the function."
+        ],
+        "callout": "When a function is called, Python jumps into the function body, runs the indented lines, and sends the return value back to the caller.",
+        "examples": [
+            {
+                "title": "Function definition",
+                "code": "def calculate_tax(price):\n    rate = 0.08\n    result = price * rate\n    return result\n"
+            },
+            {
+                "title": "Function call",
+                "code": "tax = calculate_tax(49.99)\nprint(tax)  # about 4.0\n\n# 1. 49.99 goes in as price\n# 2. The body runs: 49.99 * 0.08\n# 3. The function returns the result\n# 4. The result is stored in the tax variable\n"
+            }
+        ],
+        "facilitator": {
+            "talking_points": [
+                "This is the slide-style teaching moment the page was missing.",
+                "Use the function definition and point line-by-line: keyword, name, parameter, body, return.",
+                "Emphasize that indentation is not decoration. It tells Python what belongs inside the function."
+            ],
+            "transition": "After the anatomy walkthrough, show how the same function can be reused for multiple prices."
+        }
+    },
+    {
+        "type": "concept",
+        "id": "reusing-functions",
+        "title": "Reusing functions",
+        "topic": "Define once, call many times",
+        "time": "4 min",
+        "summary": "A function becomes more useful every time you call it with a new input.",
+        "key_points": [
+            "One function can handle many different inputs.",
+            "The logic stays in one place.",
+            "Changing the function changes every future call.",
+            "This is one of the main reasons functions make programs easier to maintain."
+        ],
+        "callout": "One function handles any price. Change the tax rate in one place and every call uses the new logic.",
+        "examples": [
+            {
+                "title": "Same function, different prices",
+                "code": "def calculate_tax(price):\n    rate = 0.08\n    result = price * rate\n    return result\n\ntax = calculate_tax(49.99)\nprint(tax)\n\ntax = calculate_tax(129.99)\nprint(tax)\n\ntax = calculate_tax(9.99)\nprint(tax)\n"
+            }
+        ],
+        "facilitator": {
+            "talking_points": [
+                "Ask what would happen if the tax rate changed from 8 percent to 9 percent.",
+                "The answer should be: update the function once, not every calculation throughout the file."
+            ],
+            "transition": "Move into the shipping cost practice from the deck."
+        }
+    },
+    {
+        "type": "exercise",
+        "id": "shipping-cost",
+        "title": "Practice: Shipping Cost",
+        "topic": "Functions and return values",
+        "time": "6 min",
+        "goal": "Calculate the shipping cost for a package.",
+        "predict": "For a 2.0 kg package at $3.50/kg, what should heavy_cost become?",
+        "task": "Fix only the heavy_cost line so it calls calculate_shipping with heavy_weight.",
+        "starter": "def calculate_shipping(weight):\n    rate = 3.50\n    cost = rate * weight\n    return cost\n\nstandard_weight = 1.0\nheavy_weight = 2.0\n\n# don't touch above this line\n\nstandard_cost = calculate_shipping(standard_weight)\nheavy_cost = 0              # <-- fix this line!\n\n# don't touch below this line\n\nprint(\"Standard weight:\", standard_weight, \"kg.\")\nprint(\"Standard shipping:\", standard_cost)\nprint(\"Heavy weight:\", heavy_weight, \"kg.\")\nprint(\"Heavy shipping:\", heavy_cost)\n",
+        "solution": "def calculate_shipping(weight):\n    rate = 3.50\n    cost = rate * weight\n    return cost\n\nstandard_weight = 1.0\nheavy_weight = 2.0\n\n# don't touch above this line\n\nstandard_cost = calculate_shipping(standard_weight)\nheavy_cost = calculate_shipping(heavy_weight)\n\n# don't touch below this line\n\nprint(\"Standard weight:\", standard_weight, \"kg.\")\nprint(\"Standard shipping:\", standard_cost)\nprint(\"Heavy weight:\", heavy_weight, \"kg.\")\nprint(\"Heavy shipping:\", heavy_cost)\n",
+        "facilitator": {
+            "rhythm": "Keep this as the first real coding rep. The goal is simply to call an existing function with the right argument.",
+            "predict_answer": "heavy_cost should become 7.0 because 3.50 * 2.0 equals 7.0.",
+            "watch_for": [
+                "Typing calculate_shipping without parentheses.",
+                "Using standard_weight instead of heavy_weight.",
+                "Changing the function body instead of fixing the intended line."
+            ],
+            "debrief": "The function was already correct. The missing part was calling it for the second weight."
+        }
+    },
+    {
+        "type": "concept",
+        "id": "multiple-parameters",
+        "title": "Multiple parameters",
+        "topic": "Functions can accept more than one input",
+        "time": "6 min",
+        "summary": "A function can take several inputs. The position of each argument determines which parameter receives it.",
+        "key_points": [
+            "Parameters are matched by position unless you use named arguments.",
+            "In subtract(5, 3), a receives 5 and b receives 3.",
+            "Changing the order can change the result.",
+            "Multiple parameters are useful when one result depends on several values."
+        ],
+        "callout": "The argument position matters. subtract(5, 3) is different from subtract(3, 5).",
+        "examples": [
+            {
+                "title": "Two parameters",
+                "code": "def subtract(a, b):\n    result = a - b\n    return result\n\nresult = subtract(5, 3)\nprint(result)  # 2\n"
+            },
+            {
+                "title": "Several parameters in one function",
+                "code": "def create_invoice(client, amount, product, qty):\n    line1 = \"Invoice for \" + client + \": \" + product\n    line2 = \"Qty: \" + qty + \" at $\" + amount + \" each.\"\n    return line1 + \" | \" + line2\n\nclient = \"Acme Corp\"\namount = \"49.99\"\ninvoice = create_invoice(client, amount, \"Widget\", \"100\")\nprint(invoice)\n"
+            }
+        ],
+        "facilitator": {
+            "talking_points": [
+                "Run subtract(5, 3), then ask what subtract(3, 5) would print.",
+                "The invoice example is mostly about position and readability, not string formatting mastery."
+            ],
+            "transition": "The next exercise asks for one function with three revenue inputs."
+        }
+    },
+    {
+        "type": "exercise",
+        "id": "total-revenue",
+        "title": "Practice: Total Revenue",
+        "topic": "Multiple parameters",
+        "time": "7 min",
+        "goal": "Calculate total revenue from three sales channels.",
+        "predict": "What should Q1 revenue be for 12000, 8500, and 4200?",
+        "task": "Complete total_revenue by returning the sum of its three parameters.",
+        "starter": "def total_revenue(channel_one, channel_two, channel_three):\n    pass          # <-- replace with your code\n\n# Don't touch below this line\n# Q1 revenue by channel\nonline = 12000\nretail = 8500\nwholesale = 4200\nq1_revenue = total_revenue(online, retail, wholesale)\nprint(\"Revenue from\", online, retail, \"and\", wholesale, \"...\")\nprint(q1_revenue, \"total Q1 revenue!\")\nprint(\"=====================================\")\n# Q2 revenue by channel\nonline2 = 15000\nretail2 = 9200\nwholesale2 = 5100\nq2_revenue = total_revenue(online2, retail2, wholesale2)\nprint(\"Revenue from\", online2, retail2, \"and\", wholesale2, \"...\")\nprint(q2_revenue, \"total Q2 revenue!\")\n",
+        "solution": "def total_revenue(channel_one, channel_two, channel_three):\n    return channel_one + channel_two + channel_three\n\n# Don't touch below this line\n# Q1 revenue by channel\nonline = 12000\nretail = 8500\nwholesale = 4200\nq1_revenue = total_revenue(online, retail, wholesale)\nprint(\"Revenue from\", online, retail, \"and\", wholesale, \"...\")\nprint(q1_revenue, \"total Q1 revenue!\")\nprint(\"=====================================\")\n# Q2 revenue by channel\nonline2 = 15000\nretail2 = 9200\nwholesale2 = 5100\nq2_revenue = total_revenue(online2, retail2, wholesale2)\nprint(\"Revenue from\", online2, retail2, \"and\", wholesale2, \"...\")\nprint(q2_revenue, \"total Q2 revenue!\")\n",
+        "facilitator": {
+            "rhythm": "Use this to reinforce that parameter order matters, but the function can work with any three channel values.",
+            "predict_answer": "Q1 revenue should be 24,700. Q2 revenue should be 29,300.",
+            "watch_for": [
+                "Using print instead of return.",
+                "Adding the named variables online, retail, and wholesale inside the function instead of using parameters.",
+                "Forgetting one channel."
+            ],
+            "debrief": "A function should use its parameters so it works for Q1, Q2, or any future quarter."
+        }
+    },
+    {
+        "type": "concept",
+        "id": "print-vs-return",
+        "title": "Printing vs. returning",
+        "topic": "Displaying a value vs. giving a value back",
+        "time": "8 min",
+        "summary": "print() shows a value in the console. return sends a value back to the code that called the function.",
+        "key_points": [
+            "print() is useful for humans looking at the output window.",
+            "print() does not give a value back to the caller.",
+            "return gives a value back so another variable or function can use it.",
+            "A function that does not return a value returns None."
+        ],
+        "callout": "Use print() to debug or display. Use return to pass data between functions.",
+        "examples": [
+            {
+                "title": "This displays 8, but result becomes None",
+                "code": "def show_total(a, b):\n    print(a + b)\n\nresult = show_total(3, 5)\nprint(result)  # None\n"
+            },
+            {
+                "title": "This returns 8, so result stores 8",
+                "code": "def get_total(a, b):\n    return a + b\n\nresult = get_total(3, 5)\nprint(result)  # 8\n"
+            }
+        ],
+        "facilitator": {
+            "talking_points": [
+                "This is usually the most important beginner misconception in the session.",
+                "Say it plainly: print is for the screen; return is for the program.",
+                "Run the first example and let None appear. Then explain it."
+            ],
+            "transition": "Now fix a function that prints when it should return."
+        }
+    },
+    {
+        "type": "exercise",
+        "id": "employee-title",
+        "title": "Practice: Format Employee Title",
+        "topic": "Printing vs. returning",
+        "time": "8 min",
+        "goal": "Fix a function that prints the title instead of returning it.",
+        "predict": "Before fixing it, what will the Title line show after get_title prints the title?",
+        "task": "Replace the print inside get_title with a return so the test function receives the title.",
+        "starter": "def get_title(first_name, last_name, role):\n    title = first_name + \" \" + last_name + \" the \" + role\n    print(title)              # <-- bug! should be return\n\n# Don't touch below this line\n\ndef test(first_name, last_name, role):\n    title = get_title(first_name, last_name, role)\n    print(\"First name:\", first_name)\n    print(\"Last name:\", last_name)\n    print(\"Role:\", role)\n    print(\"Title:\", title)\n    print(\"=====================================\")\n\ntest(\"Alice\", \"Chen\", \"analyst\")\ntest(\"Bob\", \"Martinez\", \"manager\")\ntest(\"Carol\", \"Williams\", \"director\")\ntest(\"Dave\", \"Johnson\", \"engineer\")\n",
+        "solution": "def get_title(first_name, last_name, role):\n    title = first_name + \" \" + last_name + \" the \" + role\n    return title\n\n# Don't touch below this line\n\ndef test(first_name, last_name, role):\n    title = get_title(first_name, last_name, role)\n    print(\"First name:\", first_name)\n    print(\"Last name:\", last_name)\n    print(\"Role:\", role)\n    print(\"Title:\", title)\n    print(\"=====================================\")\n\ntest(\"Alice\", \"Chen\", \"analyst\")\ntest(\"Bob\", \"Martinez\", \"manager\")\ntest(\"Carol\", \"Williams\", \"director\")\ntest(\"Dave\", \"Johnson\", \"engineer\")\n",
+        "facilitator": {
+            "rhythm": "This is one of the most important beginner moments in the session. Let them see the duplicated output and None before fixing it.",
+            "predict_answer": "Before the fix, the title prints once inside get_title, but the Title line shows None because the function did not return the title.",
+            "watch_for": [
+                "Leaving print(title) in place.",
+                "Adding return after print but not removing the debugging print.",
+                "Returning first_name, last_name, role separately instead of returning the formatted title."
+            ],
+            "debrief": "print displays something now. return gives a value back to the caller so other code can use it."
+        }
+    },
+    {
+        "type": "concept",
+        "id": "function-order",
+        "title": "Order of functions",
+        "topic": "Define first, call later",
+        "time": "5 min",
+        "summary": "A common structure is to define functions first, define a main() function as the entry point, and call main() at the end of the file.",
+        "key_points": [
+            "Python needs to know a function exists before it can call it.",
+            "Putting calls near the bottom keeps the file easier to read.",
+            "A main() function gives the program a clear starting point.",
+            "Helper functions can call other helper functions."
+        ],
+        "callout": "The pattern is: define all functions, create main(), call main() at the very end.",
+        "examples": [
+            {
+                "title": "main() entry point pattern",
+                "code": "def main():\n    revenue = 50000\n    expenses = 35000\n    calculate_profit(revenue, expenses)\n\ndef calculate_profit(r, e):\n    profit = r - e\n    display_report(profit)\n\ndef display_report(profit):\n    print(f\"Net profit: ${profit:,}\")\n\n# Call the entry point at the end.\nmain()\n"
+            }
+        ],
+        "facilitator": {
+            "talking_points": [
+                "This is not about memorizing main(); it is about giving programs a clean shape.",
+                "Point out that main calls calculate_profit, and calculate_profit calls display_report."
+            ],
+            "transition": "Next, show what happens when functions do not return anything."
+        }
+    },
+    {
+        "type": "concept",
+        "id": "none-return",
+        "title": "None return",
+        "topic": "What functions return when they return nothing",
+        "time": "5 min",
+        "summary": "If a function does not explicitly return a value, Python returns None.",
+        "key_points": [
+            "return None explicitly returns None.",
+            "A bare return also returns None.",
+            "No return statement also returns None.",
+            "None can quietly break later calculations if you expected a number or string."
+        ],
+        "callout": "If you need the result elsewhere, always use return with the value you need.",
+        "examples": [
+            {
+                "title": "Three ways to return None",
+                "code": "def log_sale_one():\n    print(\"Sale recorded\")\n    return None\n\ndef log_sale_two():\n    print(\"Sale recorded\")\n    return\n\ndef log_sale_three():\n    print(\"Sale recorded\")\n\nprint(log_sale_one())\nprint(log_sale_two())\nprint(log_sale_three())\n"
+            }
+        ],
+        "facilitator": {
+            "talking_points": [
+                "Tie this back to print vs return.",
+                "Beginners often think a printed value can be reused. It cannot.",
+                "If the return value matters, do not leave it implicit."
+            ],
+            "transition": "After one return value, show returning multiple values."
+        }
+    },
+    {
+        "type": "concept",
+        "id": "multiple-returns",
+        "title": "Multiple return values",
+        "topic": "Returning more than one value",
+        "time": "6 min",
+        "summary": "A function can return more than one value by separating them with commas. The caller receives them in the same order.",
+        "key_points": [
+            "return revenue, commission sends back two values.",
+            "The caller can unpack them into two variables.",
+            "Order matters when receiving multiple values.",
+            "Variable names on the receiving side do not change the order."
+        ],
+        "callout": "It is the order of returned values that matters, not the variable names you choose later.",
+        "examples": [
+            {
+                "title": "Returning revenue and commission",
+                "code": "def process_sale(item_price, quantity):\n    revenue = item_price * quantity\n    commission = revenue * 0.10\n    return revenue, commission\n\nrevenue, commission = process_sale(25.00, 100)\nprint(f\"Revenue: ${revenue}, Commission: ${commission}\")\n\na, b = process_sale(25.00, 100)\nprint(a)  # revenue\nprint(b)  # commission\n"
+            }
+        ],
+        "facilitator": {
+            "talking_points": [
+                "The comma is the important visual cue.",
+                "Use the a, b example to show that receiving variable names do not drive the result."
+            ],
+            "transition": "Now complete a function that returns a confirmation and the next order number."
+        }
+    },
+    {
+        "type": "exercise",
+        "id": "process-order",
+        "title": "Practice: Process Order",
+        "topic": "Multiple return values",
+        "time": "8 min",
+        "goal": "Return a confirmation string and the next order number.",
+        "predict": "What two values should process_order(\"Wireless Mouse\", 1001) return?",
+        "task": "Create the confirmation string, create next_order, and return both values.",
+        "starter": "def process_order(product_name, order_number):\n    pass          # <-- your code here\n\n\n# Example usage:\nconfirmation, next_num = process_order(\"Wireless Mouse\", 1001)\nprint(confirmation)   # \"Wireless Mouse - confirmed\"\nprint(next_num)   # 1002\n",
+        "solution": "def process_order(product_name, order_number):\n    confirmation = f\"{product_name} - confirmed\"\n    next_order = order_number + 1\n    return confirmation, next_order\n\n\n# Example usage:\nconfirmation, next_num = process_order(\"Wireless Mouse\", 1001)\nprint(confirmation)   # \"Wireless Mouse - confirmed\"\nprint(next_num)   # 1002\n",
+        "facilitator": {
+            "rhythm": "This follows immediately after multiple return values. Reinforce that the left side receives values in the same order they are returned.",
+            "predict_answer": "It should return \"Wireless Mouse - confirmed\" and 1002.",
+            "watch_for": [
+                "Returning only the confirmation.",
+                "Printing instead of returning.",
+                "Returning next_order first, which swaps the assigned values."
+            ],
+            "debrief": "Returning multiple values with commas lets the caller unpack those values into separate variables."
+        }
+    },
+    {
+        "type": "concept",
+        "id": "parameters-arguments",
+        "title": "Parameters vs. arguments",
+        "topic": "The names vs. the actual values",
+        "time": "4 min",
+        "summary": "Parameters are the names in the function definition. Arguments are the actual values passed into the function call.",
+        "key_points": [
+            "In def add(a, b), a and b are parameters.",
+            "In add(5, 6), 5 and 6 are arguments.",
+            "Parameters are placeholders for future values.",
+            "Arguments are the real values used in a specific call."
+        ],
+        "callout": "In practice, developers often use these words loosely. Understanding the difference is still useful.",
+        "examples": [
+            {
+                "title": "Parameters and arguments",
+                "code": "# a and b are parameters.\ndef add(a, b):\n    return a + b\n\n# 5 and 6 are arguments.\ntotal = add(5, 6)\nprint(total)\n"
+            }
+        ],
+        "facilitator": {
+            "talking_points": [
+                "Keep this short. The vocabulary helps, but it is not the main skill.",
+                "Use this to reinforce definition versus call."
+            ],
+            "transition": "Next, make some arguments optional with default values."
+        }
+    },
+    {
+        "type": "concept",
+        "id": "default-values",
+        "title": "Default values",
+        "topic": "Making parameters optional",
+        "time": "6 min",
+        "summary": "A parameter can have a default value. If the caller leaves that argument out, Python uses the default.",
+        "key_points": [
+            "name=\"there\" means name is optional.",
+            "If a caller passes a name, that value is used.",
+            "If a caller does not pass a name, the default is used.",
+            "Optional parameters must come after required parameters."
+        ],
+        "callout": "Defaults are helpful when most calls use the same value but some calls need to override it.",
+        "examples": [
+            {
+                "title": "Greeting with a default name",
+                "code": "def get_greeting(email, name=\"there\"):\n    print(\"Hello\", name, \"welcome!\")\n    print(\"You registered your email:\", email)\n\nget_greeting(\"alice@acme.com\", \"Alice\")\nget_greeting(\"bob@acme.com\")\n"
+            }
+        ],
+        "facilitator": {
+            "talking_points": [
+                "Show both calls. The second call is the payoff because it omits name.",
+                "Mention the ordering rule: required parameters first, optional parameters after."
+            ],
+            "transition": "The next two exercises use default values and returning multiple values."
+        }
+    },
+    {
+        "type": "exercise",
+        "id": "apply-expenses",
+        "title": "Practice: Apply Expenses",
+        "topic": "Default parameter values",
+        "time": "8 min",
+        "goal": "Complete two functions that use default deductions.",
+        "predict": "If deductions is not provided, what value does Python use?",
+        "task": "Complete both functions so deductions defaults to 0 and reduces the expense amount.",
+        "starter": "def apply_operating_costs(revenue, deductions=0):\n    # 1. Set deductions default to 0\n    # 2. damage = 500 minus the deductions\n    # 3. new_revenue = revenue minus damage\n    # 4. Return new_revenue\n    pass\n\ndef apply_tax_burden(revenue, deductions=0):\n    # 1. Set deductions default to 0\n    # 2. damage = 1000 minus the deductions\n    # 3. new_revenue = revenue minus damage\n    # 4. Return new_revenue\n    pass\n",
+        "solution": "def apply_operating_costs(revenue, deductions=0):\n    damage = 500 - deductions\n    new_revenue = revenue - damage\n    return new_revenue\n\ndef apply_tax_burden(revenue, deductions=0):\n    damage = 1000 - deductions\n    new_revenue = revenue - damage\n    return new_revenue\n",
+        "facilitator": {
+            "rhythm": "This exercise is from the slide deck and does not include print calls. If desired, add a quick live call after they finish, such as print(apply_operating_costs(5000)).",
+            "predict_answer": "Python uses the default value 0 when deductions is omitted.",
+            "watch_for": [
+                "Putting deductions before revenue.",
+                "Calculating damage as deductions - 500 instead of 500 - deductions.",
+                "Forgetting to return new_revenue."
+            ],
+            "debrief": "The default makes deductions optional. The deduction reduces the expense amount before subtracting it from revenue."
+        }
+    },
+    {
+        "type": "exercise",
+        "id": "apply-discount",
+        "title": "Practice: Apply Discount",
+        "topic": "Multiple return values and percentages",
+        "time": "7 min",
+        "goal": "Return two discounted prices from one function.",
+        "predict": "Which discount should produce the lower final price: standard or premium?",
+        "task": "Calculate standard_discount and premium_discount, then return both values.",
+        "starter": "def apply_discount(original_price):\n    # A premium discount is stronger than standard\n    # standard = 50% of original price\n    # premium  = 25% of original price\n    pass          # <-- return both values\n\n\n# Tip: multiply by a decimal to get a percentage\n# e.g. 30% of 50 is 50 * 0.3\n",
+        "solution": "def apply_discount(original_price):\n    # A premium discount is stronger than standard\n    # standard = 50% of original price\n    # premium  = 25% of original price\n    standard_discount = original_price * 0.50\n    premium_discount = original_price * 0.25\n    return standard_discount, premium_discount\n\n\n# Tip: multiply by a decimal to get a percentage\n# e.g. 30% of 50 is 50 * 0.3\n",
+        "facilitator": {
+            "rhythm": "This mirrors the deck exactly, including the percentage hint. If learners need a runnable check, add print(apply_discount(100)) after the function.",
+            "predict_answer": "Premium should produce the lower final price because it reduces the price to 25% of the original.",
+            "watch_for": [
+                "Interpreting a 50% reduction as original_price * 0.50 is correct here because the final price is 50% of original.",
+                "Returning only one value.",
+                "Using 75 instead of 0.25 for the premium calculation."
+            ],
+            "debrief": "Multiplying by decimals is the simplest way to calculate percentages. Returning both values gives the caller both discount levels."
+        }
+    },
+    {
+        "type": "concept",
+        "id": "functions-review",
+        "title": "Functions in review",
+        "topic": "Key takeaways",
+        "time": "4 min",
+        "summary": "Before moving into computing in Python, pause and summarize what functions let us do.",
+        "key_points": [
+            "Define with def: name, parameters, body, and return value.",
+            "Call to use: pass arguments in the right order to get results back.",
+            "Return, do not print, when another part of the program needs the value.",
+            "Use commas to return more than one value.",
+            "Use default values to make parameters optional.",
+            "Define functions before calling them, often using a main() entry point."
+        ],
+        "callout": "Functions turn repeated steps into reusable tools.",
+        "examples": [],
+        "facilitator": {
+            "talking_points": [
+                "Use this as a checkpoint. Ask for one chat answer: A function is useful because...",
+                "If the group is struggling, pause here before moving to arithmetic."
+            ],
+            "transition": "Next section: computing in Python."
+        }
+    },
+    {
+        "type": "concept",
+        "id": "computing-in-python",
+        "title": "Computing in Python",
+        "topic": "Arithmetic and comparisons",
+        "time": "1 min",
+        "summary": "The second part of the session shifts from functions into basic computation: arithmetic operators, integer division, modulo, order of operations, and comparisons.",
+        "key_points": [
+            "Python can calculate with integers and floats.",
+            "Some operators produce numbers; comparison operators produce True or False.",
+            "These basics show up constantly once you start writing functions that make decisions."
+        ],
+        "callout": "Functions help organize reusable steps. Arithmetic and comparisons help those functions calculate answers.",
+        "examples": [
+            {
+                "title": "Small computation preview",
+                "code": "subtotal = 49.99 * 3\ntax = subtotal * 0.08\ntotal = subtotal + tax\nprint(total)\n"
+            }
+        ],
+        "facilitator": {
+            "talking_points": [
+                "Treat this as a section transition, not a long explanation.",
+                "Connect back to the earlier function examples: many useful functions are just packaged calculations."
+            ],
+            "transition": "Move directly into the arithmetic operators."
+        }
+    },
+    {
+        "type": "concept",
+        "id": "arithmetic-operators",
+        "title": "Arithmetic operators",
+        "topic": "Computing in Python",
+        "time": "6 min",
+        "summary": "Python includes arithmetic operators for addition, subtraction, multiplication, division, floor division, modulo, and exponents.",
+        "key_points": [
+            "+ adds values.",
+            "- subtracts values.",
+            "* multiplies values.",
+            "/ divides and returns a float.",
+            "// performs floor division and drops the decimal part.",
+            "% returns the remainder.",
+            "** raises a value to a power."
+        ],
+        "callout": "Python handles both integers and floats. Division with / always returns a float.",
+        "examples": [
+            {
+                "title": "Operators in action",
+                "code": "print(10 + 3)   # 13\nprint(10 - 3)   # 7\nprint(10 * 3)   # 30\nprint(10 / 3)   # 3.333...\nprint(10 // 3)  # 3\nprint(10 % 3)   # 1\nprint(10 ** 3)  # 1000\n"
+            },
+            {
+                "title": "Subtotal, tax, and boxes",
+                "code": "price = 49.99\nquantity = 3\nsubtotal = price * quantity\nprint(subtotal)\n\ntax_rate = 0.08\ntax = subtotal * tax_rate\ntotal = subtotal + tax\nprint(total)\n\nboxes = quantity // 2\nleftover = quantity % 2\nprint(boxes, leftover)\n"
+            }
+        ],
+        "facilitator": {
+            "talking_points": [
+                "Most operators are intuitive except // and %. Foreshadow that those two get their own explanation.",
+                "Use the boxes example to make // and % practical."
+            ],
+            "transition": "Now slow down on integer division and modulo."
+        }
+    },
+    {
+        "type": "concept",
+        "id": "integer-division-modulo",
+        "title": "Integer division and modulo",
+        "topic": "Splitting numbers into groups and leftovers",
+        "time": "7 min",
+        "summary": "Floor division tells you how many whole times one number fits into another. Modulo tells you what is left over.",
+        "key_points": [
+            "7 // 2 is 3 because 2 fits into 7 three whole times.",
+            "7 % 2 is 1 because 1 is left over.",
+            "These operators are useful for boxes, schedules, time, pages, rows, and batching.",
+            "Together: number = (number // group_size) * group_size + (number % group_size)."
+        ],
+        "callout": "Use // when you need complete groups. Use % when you need the leftovers.",
+        "examples": [
+            {
+                "title": "Whole groups and remainders",
+                "code": "print(7 // 2)    # 3\nprint(15 // 4)   # 3\nprint(20 // 3)   # 6\n\nprint(7 % 2)     # 1\nprint(15 % 4)    # 3\nprint(20 % 3)    # 2\n"
+            },
+            {
+                "title": "Convert minutes to hours and minutes",
+                "code": "total_minutes = 135\nhours = total_minutes // 60\nminutes = total_minutes % 60\nprint(hours, \"h\", minutes, \"m\")\n"
+            }
+        ],
+        "facilitator": {
+            "talking_points": [
+                "This is worth demonstrating slowly because modulo is often new.",
+                "Use a physical example: 157 items into boxes of 12."
+            ],
+            "transition": "Before the box exercise, cover order of operations."
+        }
+    },
+    {
+        "type": "concept",
+        "id": "order-of-operations",
+        "title": "Order of operations",
+        "topic": "How Python evaluates math expressions",
+        "time": "5 min",
+        "summary": "Python follows standard math precedence. Parentheses override the default order and often make code clearer.",
+        "key_points": [
+            "Exponents happen before multiplication and division.",
+            "Multiplication, division, floor division, and modulo happen before addition and subtraction.",
+            "Parentheses make the intended order explicit.",
+            "When in doubt, add parentheses for readability."
+        ],
+        "callout": "2 + 3 * 4 is 14, not 20. Parentheses change it to (2 + 3) * 4, which is 20.",
+        "examples": [
+            {
+                "title": "Precedence examples",
+                "code": "result = 2 + 3 * 4\nprint(result)  # 14\n\nresult = (2 + 3) * 4\nprint(result)  # 20\n\nresult = 2 * 3 ** 2\nprint(result)  # 18\n\nresult = (10 + 5) * 2 / (3 - 1)\nprint(result)  # 15.0\n"
+            }
+        ],
+        "facilitator": {
+            "talking_points": [
+                "The key is not memorizing a full precedence table. The practical habit is using parentheses when it improves clarity.",
+                "Ask learners to predict the first result before showing 14."
+            ],
+            "transition": "Now use // and % in the warehouse quantity exercise."
+        }
+    },
+    {
+        "type": "concept",
+        "id": "comparison-operators",
+        "title": "Comparison operators",
+        "topic": "True and False questions",
+        "time": "6 min",
+        "summary": "Comparison operators compare values and return booleans: True or False.",
+        "key_points": [
+            "== checks equality.",
+            "!= checks not equal.",
+            "> and < compare greater than or less than.",
+            ">= and <= compare greater-or-equal or less-or-equal.",
+            "A single = assigns a value. It does not compare values."
+        ],
+        "callout": "Comparisons return booleans, which are the foundation of if-statements and loops.",
+        "examples": [
+            {
+                "title": "Comparison examples",
+                "code": "print(10 == 10)   # True\nprint(10 != 5)    # True\nprint(10 > 5)     # True\nprint(10 < 5)     # False\nprint(10 >= 10)   # True\nprint(10 <= 5)    # False\n"
+            }
+        ],
+        "facilitator": {
+            "talking_points": [
+                "Call out = versus == explicitly. That confusion will come back later with if-statements.",
+                "Frame comparisons as yes/no questions that Python answers with True or False."
+            ],
+            "transition": "Now write a budget checker that returns a boolean directly."
+        }
+    },
+    {
+        "type": "exercise",
+        "id": "quantity-calculator",
+        "title": "Practice: Quantity Calculator",
+        "topic": "Integer division and modulo",
+        "time": "6 min",
+        "goal": "Calculate full boxes and leftover items.",
+        "predict": "A warehouse has 157 items and boxes hold 12. How many full boxes are there, and how many items are left over?",
+        "task": "Use // for full boxes and % for leftover items.",
+        "starter": "total_items = 157\nbox_size = 12\n\n# don't touch above this line\n\nfull_boxes = 0          # <-- fix this line!\nleftover_items = 0      # <-- fix this line!\n\n# don't touch below this line\n\nprint(\"Total items:\", total_items)\nprint(\"Box size:\", box_size)\nprint(\"Full boxes:\", full_boxes)\nprint(\"Leftover items:\", leftover_items)\n",
+        "solution": "total_items = 157\nbox_size = 12\n\n# don't touch above this line\n\nfull_boxes = total_items // box_size\nleftover_items = total_items % box_size\n\n# don't touch below this line\n\nprint(\"Total items:\", total_items)\nprint(\"Box size:\", box_size)\nprint(\"Full boxes:\", full_boxes)\nprint(\"Leftover items:\", leftover_items)\n",
+        "facilitator": {
+            "rhythm": "This should feel very similar to the slide. Let learners use the hint directly: // for full boxes and % for leftovers.",
+            "predict_answer": "There should be 13 full boxes and 1 item left over because 157 // 12 is 13 and 157 % 12 is 1.",
+            "watch_for": [
+                "Using / instead of //.",
+                "Reversing the modulo operation.",
+                "Hardcoding 13 and 1 instead of using total_items and box_size."
+            ],
+            "debrief": "Floor division answers “how many full groups?” Modulo answers “what is left over?”"
+        }
+    },
+    {
+        "type": "exercise",
+        "id": "budget-checker",
+        "title": "Practice: Evaluate Comparisons",
+        "topic": "Comparison operators",
+        "time": "6 min",
+        "goal": "Return True if the expense is within budget, False otherwise.",
+        "predict": "Which item should be outside the 1000 budget?",
+        "task": "Complete check_budget with a comparison operator that returns True or False directly.",
+        "starter": "def check_budget(budget, expense):\n    pass          # <-- replace with your code\n\n# Don't touch below this line\n\nbudget = 1000\nrent = 800\nfood = 250\nentertainment = 1200\n\nprint(\"Rent within budget?\", check_budget(budget, rent))\nprint(\"Food within budget?\", check_budget(budget, food))\nprint(\"Entertainment within budget?\", check_budget(budget, entertainment))\n\n# Expected output:\n# Rent within budget? True\n# Food within budget? True\n# Entertainment within budget? False\n",
+        "solution": "def check_budget(budget, expense):\n    return expense <= budget\n\n# Don't touch below this line\n\nbudget = 1000\nrent = 800\nfood = 250\nentertainment = 1200\n\nprint(\"Rent within budget?\", check_budget(budget, rent))\nprint(\"Food within budget?\", check_budget(budget, food))\nprint(\"Entertainment within budget?\", check_budget(budget, entertainment))\n\n# Expected output:\n# Rent within budget? True\n# Food within budget? True\n# Entertainment within budget? False\n",
+        "facilitator": {
+            "rhythm": "This is a short exercise. The important point is that a comparison expression already returns True or False.",
+            "predict_answer": "Entertainment should be outside budget because 1200 is greater than 1000.",
+            "watch_for": [
+                "Using = instead of <=.",
+                "Returning budget <= expense, which reverses the logic.",
+                "Writing a longer if statement when return expense <= budget is enough."
+            ],
+            "debrief": "Direct boolean returns keep comparison functions simple and readable."
+        }
+    },
+    {
+        "type": "concept",
+        "id": "coming-up-next",
+        "title": "Coming up next",
+        "topic": "Python loops",
+        "time": "2 min",
+        "summary": "The next topic is loops: repeating work without copying code or manually calling the same logic over and over.",
+        "key_points": [
+            "for loops and iterating over ranges.",
+            "while loops and loop control.",
+            "break, continue, and nested loops."
+        ],
+        "callout": "Functions let us name reusable work. Loops let us repeat work.",
+        "examples": [
+            {
+                "title": "Small preview",
+                "code": "for number in range(3):\n    print(\"Loop number:\", number)\n"
+            }
+        ],
+        "facilitator": {
+            "talking_points": [
+                "Use this as a teaser, not a lesson.",
+                "Close by connecting functions and loops: reusable steps plus repeated execution."
+            ],
+            "transition": "End with reflection."
+        }
+    }
+];
+    const exercises = sections.filter(section => section.type === 'exercise');
+    const STORAGE_KEY = 'python-session-2-progress-slide-aligned-v1';
+    const FACILITATOR_KEY = 'python-session-2-facilitator-unlocked-slide-aligned-v1';
+    const compilerUrl = 'https://www.pythoncompiler.io/';
+
+    function byId(id) { return document.getElementById(id); }
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+    function loadProgress() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+    }
+    function saveProgress(progress) { localStorage.setItem(STORAGE_KEY, JSON.stringify(progress)); }
+    function showToast(message) {
+      const toast = byId('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+    function copyText(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text);
+      }
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      document.execCommand('copy');
+      textarea.remove();
+      return Promise.resolve();
+    }
+    function renderAgenda() {
+      byId('agendaGrid').innerHTML = sections.map((section, index) => `
+        <a class="agenda-item" href="#${section.id}">
+          <span class="tag ${section.type === 'exercise' ? 'exercise' : ''}">${section.type === 'exercise' ? 'Exercise' : 'Concept'}</span>
+          <strong>${index + 1}. ${escapeHtml(section.title)}</strong>
+          <span>${escapeHtml(section.topic)} &bull; ${escapeHtml(section.time)}</span>
+        </a>
+      `).join('');
+    }
+    function renderExample(example, sectionIndex, exampleIndex) {
+      return `
+        <div class="code-card">
+          <div class="code-card-header">
+            <div class="code-card-title">${escapeHtml(example.title)}</div>
+            <button class="button small copy-example" type="button" data-section-index="${sectionIndex}" data-example-index="${exampleIndex}">Copy code</button>
+          </div>
+          <pre><code>${escapeHtml(example.code)}</code></pre>
+        </div>
+      `;
+    }
+    function renderConcept(section, index) {
+      const examples = (section.examples || []).map((example, exampleIndex) => renderExample(example, index, exampleIndex)).join('');
+      return `
+        <article id="${section.id}" class="concept-card">
+          <div class="section-header">
+            <div>
+              <span class="tag">Concept</span>
+              <p class="eyebrow">${escapeHtml(section.topic)}</p>
+              <h2>${escapeHtml(section.title)}</h2>
+              <p class="summary">${escapeHtml(section.summary)}</p>
+            </div>
+            <div class="meta-pill">${escapeHtml(section.time)}</div>
+          </div>
+          <div class="concept-grid">
+            <div>
+              <h3>Key ideas</h3>
+              <ul class="key-points">${(section.key_points || []).map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
+              ${section.callout ? `<div class="callout-box"><strong>Remember:</strong> ${escapeHtml(section.callout)}</div>` : ''}
+            </div>
+            <div class="example-stack">
+              ${examples || '<div class="callout-box">No code demo for this checkpoint.</div>'}
+            </div>
+          </div>
+          <section class="facilitator-only facilitator-panel" aria-label="Facilitator notes for ${escapeHtml(section.title)}">
+            <h3>Facilitator notes</h3>
+            <p><strong>Talking points:</strong></p>
+            <ul class="common-list">${(section.facilitator.talking_points || []).map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
+            <p><strong>Transition:</strong> ${escapeHtml(section.facilitator.transition || '')}</p>
+          </section>
+        </article>
+      `;
+    }
+    function renderExercise(section, index) {
+      const progress = loadProgress();
+      return `
+        <article id="${section.id}" class="exercise-card">
+          <div class="section-header">
+            <div>
+              <span class="tag exercise">Exercise</span>
+              <p class="eyebrow">${escapeHtml(section.topic)}</p>
+              <h2>${escapeHtml(section.title)}</h2>
+              <p class="goal">${escapeHtml(section.goal)}</p>
+            </div>
+            <div class="meta-pill">${escapeHtml(section.time)}</div>
+          </div>
+
+          <div class="predict-box"><strong>Predict:</strong> ${escapeHtml(section.predict)}</div>
+          <div class="task-box"><strong>Your task:</strong> ${escapeHtml(section.task)}</div>
+
+          <div class="button-row">
+            <button class="button primary copy-starter" type="button" data-section-index="${index}">Copy starter code</button>
+            <a class="button secondary" target="_blank" rel="noopener" href="${compilerUrl}">Open PythonCompiler.io</a>
+            <label class="done-check"><input type="checkbox" data-progress-id="${section.id}" ${progress[section.id] ? 'checked' : ''}> Mark complete</label>
+          </div>
+
+          <details open>
+            <summary>Starter code</summary>
+            <pre><code>${escapeHtml(section.starter)}</code></pre>
+          </details>
+
+          <section class="facilitator-only facilitator-panel" aria-label="Facilitator content for ${escapeHtml(section.title)}">
+            <h3>Facilitator notes</h3>
+            <p><strong>How to run it:</strong> ${escapeHtml(section.facilitator.rhythm)}</p>
+            ${section.facilitator.predict_answer ? '<p><strong>Predict answer:</strong> ' + escapeHtml(section.facilitator.predict_answer) + '</p>' : ''}
+            <p><strong>Watch for:</strong></p>
+            <ul class="common-list">${section.facilitator.watch_for.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
+            <p><strong>Debrief:</strong> ${escapeHtml(section.facilitator.debrief)}</p>
+            <details class="solution-box">
+              <summary>Solution code</summary>
+              <div class="button-row"><button class="button small copy-solution" type="button" data-section-index="${index}">Copy solution code</button></div>
+              <pre><code>${escapeHtml(section.solution)}</code></pre>
+            </details>
+          </section>
+        </article>
+      `;
+    }
+    function renderSections() {
+      byId('sections').innerHTML = sections.map((section, index) => section.type === 'concept' ? renderConcept(section, index) : renderExercise(section, index)).join('');
+      bindControls();
+      updateProgressText();
+    }
+    function bindControls() {
+      document.querySelectorAll('.copy-example').forEach(button => {
+        button.addEventListener('click', () => {
+          const section = sections[Number(button.dataset.sectionIndex)];
+          const example = section.examples[Number(button.dataset.exampleIndex)];
+          copyText(example.code).then(() => showToast('Demo code copied'));
+        });
+      });
+      document.querySelectorAll('.copy-starter').forEach(button => {
+        button.addEventListener('click', () => {
+          const section = sections[Number(button.dataset.sectionIndex)];
+          copyText(section.starter).then(() => showToast('Starter code copied'));
+        });
+      });
+      document.querySelectorAll('.copy-solution').forEach(button => {
+        button.addEventListener('click', () => {
+          const section = sections[Number(button.dataset.sectionIndex)];
+          copyText(section.solution).then(() => showToast('Solution code copied'));
+        });
+      });
+      document.querySelectorAll('input[data-progress-id]').forEach(input => {
+        input.addEventListener('change', () => {
+          const progress = loadProgress();
+          progress[input.dataset.progressId] = input.checked;
+          saveProgress(progress);
+          updateProgressText();
+        });
+      });
+    }
+    function updateProgressText() {
+      const progress = loadProgress();
+      const done = exercises.filter(ex => progress[ex.id]).length;
+      byId('progressText').textContent = `${done} of ${exercises.length} exercises completed`;
+      byId('progressFill').style.width = `${Math.round((done / exercises.length) * 100)}%`;
+    }
+    function setFacilitatorMode(on) {
+      document.body.classList.toggle('facilitator-unlocked', on);
+      if (on) { sessionStorage.setItem(FACILITATOR_KEY, 'true'); }
+      else { sessionStorage.removeItem(FACILITATOR_KEY); }
+    }
+    function openFacilitatorModal() {
+      byId('facilitatorError').textContent = '';
+      byId('facilitatorPassphrase').value = '';
+      byId('facilitatorModal').classList.add('show');
+      setTimeout(() => byId('facilitatorPassphrase').focus(), 0);
+    }
+    function closeFacilitatorModal() { byId('facilitatorModal').classList.remove('show'); }
+    function normalizePassphrase(value) { return String(value || '').trim().toLowerCase(); }
+
+    byId('openFacilitator').addEventListener('click', () => {
+      if (document.body.classList.contains('facilitator-unlocked')) { showToast('Facilitator content is already visible'); }
+      else { openFacilitatorModal(); }
+    });
+    byId('cancelFacilitator').addEventListener('click', closeFacilitatorModal);
+    byId('facilitatorModal').addEventListener('click', event => { if (event.target === byId('facilitatorModal')) closeFacilitatorModal(); });
+    byId('facilitatorForm').addEventListener('submit', event => {
+      event.preventDefault();
+      const entered = normalizePassphrase(byId('facilitatorPassphrase').value);
+      const expected = normalizePassphrase(FACILITATOR_PASSPHRASE);
+      if (entered === expected) {
+        setFacilitatorMode(true);
+        closeFacilitatorModal();
+        showToast('Facilitator content unlocked');
+      } else {
+        byId('facilitatorError').textContent = 'That passphrase did not match. Continue with the attendee view.';
+      }
+    });
+    byId('lockFacilitator').addEventListener('click', () => {
+      setFacilitatorMode(false);
+      showToast('Facilitator content hidden');
+    });
+    byId('resetProgress').addEventListener('click', () => {
+      localStorage.removeItem(STORAGE_KEY);
+      renderSections();
+      showToast('Progress reset');
+    });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') closeFacilitatorModal(); });
+
+    renderAgenda();
+    renderSections();
+    if (sessionStorage.getItem(FACILITATOR_KEY) === 'true') setFacilitatorMode(true);
+    if (window.location.hash === '#facilitator') openFacilitatorModal();
+  </script>
+</body>
+</html>

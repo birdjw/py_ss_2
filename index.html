@@ -120,12 +120,36 @@
       body { background: white; }
       .panel, .concept-card, .exercise-card { box-shadow: none; break-inside: avoid; }
     }
+    /* Prism layout overrides */
+    pre[class*="language-"] { margin: 0 !important; background: var(--code-bg) !important; color: var(--code-ink); padding: 18px !important; border-radius: 0; overflow: auto; tab-size: 4; font-size: .94rem !important; line-height: 1.55; }
+    details pre[class*="language-"] { border-radius: 18px; }
+    /* Predict input */
+    .predict-input { display: block; width: 100%; margin-top: 10px; padding: 8px 10px; border: 1px solid #f3d49a; border-radius: 10px; font: inherit; font-size: .92rem; resize: vertical; background: rgba(255,255,255,0.6); color: var(--ink); }
+    /* Prev/Next section nav */
+    .section-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); gap: 12px; }
+    /* Agenda scroll-spy */
+    .agenda-item.active { border-color: var(--brand); background: var(--soft-blue); box-shadow: 0 0 0 2px #cbd8ff; }
+    /* Agenda filter */
+    .agenda-filter { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .agenda-filter .button.active-filter { background: var(--brand); color: white; border-color: transparent; }
+    /* Facilitator timer */
+    .timer-widget { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .timer-display { font-size: 1.3rem; font-weight: 900; font-variant-numeric: tabular-nums; min-width: 3.5ch; letter-spacing: -0.02em; }
+    .timer-display.warning { color: var(--accent); }
+    .timer-display.expired { color: #ef4444; }
   </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-tomorrow.min.css" />
 </head>
 <body>
   <div class="facilitator-banner" aria-live="polite">
     <div class="facilitator-banner-inner">
-      <strong>Facilitator mode is on. Extra notes and solution blocks are visible.</strong>
+      <strong>Facilitator mode is on.</strong>
+      <div class="timer-widget">
+        <span id="timerDisplay" class="timer-display" aria-live="polite">—</span>
+        <input id="timerMinutes" type="number" min="1" max="60" value="5" style="width:52px;min-height:34px;padding:4px 6px;border-radius:10px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.12);color:white;font:inherit;font-size:.9rem;" aria-label="Timer minutes" />
+        <button id="timerStart" class="button small ghost" type="button">Start</button>
+        <button id="timerReset" class="button small ghost" type="button">Reset</button>
+      </div>
       <button id="lockFacilitator" class="button small" type="button">Lock facilitator mode</button>
     </div>
   </div>
@@ -148,22 +172,20 @@
   <main>
     <section id="start" class="panel hero-grid">
       <div>
-        <h2>Session 1 recap</h2>
-        <p>Last session built the foundation we will use today. The goal of this recap is not to relearn everything from scratch. It is to bring the key ideas back into working memory before we use them inside functions.</p>
-        <ul class="steps">
-          <li><strong>Console and print:</strong> Python runs code from top to bottom, and <code>print()</code> shows output in the console.</li>
-          <li><strong>Variables:</strong> Variables store values so they can be reused, updated, and printed later.</li>
-          <li><strong>Math:</strong> Python can calculate with operators like <code>+</code>, <code>-</code>, <code>*</code>, and <code>/</code>.</li>
-          <li><strong>Comments:</strong> Comments are ignored by Python and help humans understand the code.</li>
-          <li><strong>Data types:</strong> Strings, numbers, booleans, and <code>None</code> behave differently.</li>
-          <li><strong>Strings:</strong> F-strings and concatenation let text include variable values.</li>
-          <li><strong>Functions:</strong> A function is reusable code with a name, optional inputs, an indented body, and often a return value.</li>
-        </ul>
+        <h2>How to use this page</h2>
+        <p>This page replaces the slide deck for Session 2. Work through concept cards and exercises in order, or jump to any topic using the session map below.</p>
+        <ol class="steps">
+          <li><strong>Read the concept card</strong> — key ideas and runnable code demos are shown side by side.</li>
+          <li><strong>Predict</strong> — before copying starter code, write down what you expect to happen.</li>
+          <li><strong>Copy &amp; run</strong> — paste into PythonCompiler.io and run it.</li>
+          <li><strong>Fix or complete</strong> — follow the task instruction, then run again to verify.</li>
+          <li><strong>Mark complete</strong> — check the box to update your progress bar.</li>
+        </ol>
       </div>
       <aside class="rhythm-card">
-        <h3>Carry this into Session 2</h3>
-        <p>Today builds on those basics by using functions more deliberately: calling them, passing values in, returning values out, and using them to organize calculations.</p>
-        <div class="flow">Variables + Math + Return Values = Useful Functions</div>
+        <h3>Session 2 overview</h3>
+        <p>This session deepens your understanding of functions — defining them, passing values in, returning values out — then moves into arithmetic operators and comparisons.</p>
+        <div class="flow">Functions → Arithmetic → Comparisons</div>
       </aside>
     </section>
 
@@ -198,6 +220,11 @@
 
     <section class="panel agenda">
       <h2>Session map</h2>
+      <div class="agenda-filter" id="agendaFilter">
+        <button class="button small active-filter" data-filter="all" type="button">All</button>
+        <button class="button small" data-filter="concept" type="button">Concepts only</button>
+        <button class="button small" data-filter="exercise" type="button">Exercises only</button>
+      </div>
       <div id="agendaGrid" class="agenda-grid"></div>
     </section>
 
@@ -244,7 +271,8 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.js" data-manual></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js"></script>
   <script>
     const FACILITATOR_PASSPHRASE = 'facilitator';
     const sections = [
@@ -988,6 +1016,21 @@
       toast.classList.add('show');
       setTimeout(() => toast.classList.remove('show'), 1800);
     }
+    function flashButton(button, originalLabel) {
+      button.textContent = 'Copied ✓';
+      button.disabled = true;
+      setTimeout(() => { button.textContent = originalLabel; button.disabled = false; }, 1500);
+    }
+    function renderNav(index) {
+      const prev = index > 0 ? sections[index - 1] : null;
+      const next = index < sections.length - 1 ? sections[index + 1] : null;
+      return `
+        <nav class="section-nav" aria-label="Section navigation">
+          ${prev ? `<a class="button small" href="#${prev.id}">← ${escapeHtml(prev.title)}</a>` : '<span></span>'}
+          ${next ? `<a class="button small secondary" href="#${next.id}">${escapeHtml(next.title)} →</a>` : '<span></span>'}
+        </nav>
+      `;
+    }
     function copyText(text) {
       if (navigator.clipboard && window.isSecureContext) {
         return navigator.clipboard.writeText(text);
@@ -1019,7 +1062,7 @@
             <div class="code-card-title">${escapeHtml(example.title)}</div>
             <button class="button small copy-example" type="button" data-section-index="${sectionIndex}" data-example-index="${exampleIndex}">Copy code</button>
           </div>
-          <pre><code>${escapeHtml(example.code)}</code></pre>
+          <pre><code class="language-python">${escapeHtml(example.code)}</code></pre>
         </div>
       `;
     }
@@ -1052,6 +1095,7 @@
             <ul class="common-list">${(section.facilitator.talking_points || []).map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
             <p><strong>Transition:</strong> ${escapeHtml(section.facilitator.transition || '')}</p>
           </section>
+          ${renderNav(index)}
         </article>
       `;
     }
@@ -1069,7 +1113,7 @@
             <div class="meta-pill">${escapeHtml(section.time)}</div>
           </div>
 
-          <div class="predict-box"><strong>Predict:</strong> ${escapeHtml(section.predict)}</div>
+          <div class="predict-box"><strong>Predict:</strong> ${escapeHtml(section.predict)}<textarea class="predict-input" placeholder="Write your prediction here before running the code…" rows="2" aria-label="Your prediction"></textarea></div>
           <div class="task-box"><strong>Your task:</strong> ${escapeHtml(section.task)}</div>
 
           <div class="button-row">
@@ -1080,7 +1124,7 @@
 
           <details open>
             <summary>Starter code</summary>
-            <pre><code>${escapeHtml(section.starter)}</code></pre>
+            <pre><code class="language-python">${escapeHtml(section.starter)}</code></pre>
           </details>
 
           <section class="facilitator-only facilitator-panel" aria-label="Facilitator content for ${escapeHtml(section.title)}">
@@ -1093,9 +1137,10 @@
             <details class="solution-box">
               <summary>Solution code</summary>
               <div class="button-row"><button class="button small copy-solution" type="button" data-section-index="${index}">Copy solution code</button></div>
-              <pre><code>${escapeHtml(section.solution)}</code></pre>
+              <pre><code class="language-python">${escapeHtml(section.solution)}</code></pre>
             </details>
           </section>
+          ${renderNav(index)}
         </article>
       `;
     }
@@ -1103,25 +1148,27 @@
       byId('sections').innerHTML = sections.map((section, index) => section.type === 'concept' ? renderConcept(section, index) : renderExercise(section, index)).join('');
       bindControls();
       updateProgressText();
+      if (window.Prism) Prism.highlightAll();
+      setupScrollSpy();
     }
     function bindControls() {
       document.querySelectorAll('.copy-example').forEach(button => {
         button.addEventListener('click', () => {
           const section = sections[Number(button.dataset.sectionIndex)];
           const example = section.examples[Number(button.dataset.exampleIndex)];
-          copyText(example.code).then(() => showToast('Demo code copied'));
+          copyText(example.code).then(() => { showToast('Demo code copied'); flashButton(button, 'Copy code'); });
         });
       });
       document.querySelectorAll('.copy-starter').forEach(button => {
         button.addEventListener('click', () => {
           const section = sections[Number(button.dataset.sectionIndex)];
-          copyText(section.starter).then(() => showToast('Starter code copied'));
+          copyText(section.starter).then(() => { showToast('Starter code copied'); flashButton(button, 'Copy starter code'); });
         });
       });
       document.querySelectorAll('.copy-solution').forEach(button => {
         button.addEventListener('click', () => {
           const section = sections[Number(button.dataset.sectionIndex)];
-          copyText(section.solution).then(() => showToast('Solution code copied'));
+          copyText(section.solution).then(() => { showToast('Solution code copied'); flashButton(button, 'Copy solution code'); });
         });
       });
       document.querySelectorAll('input[data-progress-id]').forEach(input => {
@@ -1175,6 +1222,54 @@
       setFacilitatorMode(false);
       showToast('Facilitator content hidden');
     });
+    let timerInterval = null;
+    let timerSeconds = 0;
+    let timerStarted = false;
+    function formatTime(secs) {
+      const m = Math.floor(secs / 60);
+      const s = secs % 60;
+      return `${m}:${String(s).padStart(2, '0')}`;
+    }
+    function updateTimerDisplay() {
+      const display = byId('timerDisplay');
+      if (!display) return;
+      display.textContent = formatTime(timerSeconds);
+      display.classList.toggle('warning', timerSeconds > 0 && timerSeconds <= 60);
+      display.classList.toggle('expired', timerStarted && timerSeconds === 0 && !timerInterval);
+    }
+    byId('timerStart').addEventListener('click', () => {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        byId('timerStart').textContent = 'Start';
+      } else {
+        const mins = parseInt(byId('timerMinutes').value, 10) || 5;
+        timerSeconds = mins * 60;
+        timerStarted = true;
+        updateTimerDisplay();
+        timerInterval = setInterval(() => {
+          timerSeconds = Math.max(0, timerSeconds - 1);
+          updateTimerDisplay();
+          if (timerSeconds === 0) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            byId('timerStart').textContent = 'Start';
+            showToast('Time is up!');
+          }
+        }, 1000);
+        byId('timerStart').textContent = 'Pause';
+      }
+    });
+    byId('timerReset').addEventListener('click', () => {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      timerSeconds = 0;
+      timerStarted = false;
+      const display = byId('timerDisplay');
+      display.textContent = '—';
+      display.classList.remove('warning', 'expired');
+      byId('timerStart').textContent = 'Start';
+    });
     byId('resetProgress').addEventListener('click', () => {
       localStorage.removeItem(STORAGE_KEY);
       renderSections();
@@ -1182,8 +1277,37 @@
     });
     document.addEventListener('keydown', event => { if (event.key === 'Escape') closeFacilitatorModal(); });
 
+    function setupScrollSpy() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            document.querySelectorAll('#agendaGrid .agenda-item').forEach(item => item.classList.remove('active'));
+            const activeItem = document.querySelector(`#agendaGrid a[href="#${entry.target.id}"]`);
+            if (activeItem) activeItem.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+      sections.forEach(section => {
+        const el = document.getElementById(section.id);
+        if (el) observer.observe(el);
+      });
+    }
+    function setupAgendaFilter() {
+      document.querySelectorAll('#agendaFilter [data-filter]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('#agendaFilter [data-filter]').forEach(b => b.classList.remove('active-filter'));
+          btn.classList.add('active-filter');
+          const filter = btn.dataset.filter;
+          document.querySelectorAll('#agendaGrid .agenda-item').forEach(item => {
+            const type = item.querySelector('.tag.exercise') ? 'exercise' : 'concept';
+            item.style.display = (filter === 'all' || filter === type) ? '' : 'none';
+          });
+        });
+      });
+    }
     renderAgenda();
     renderSections();
+    setupAgendaFilter();
     if (sessionStorage.getItem(FACILITATOR_KEY) === 'true') setFacilitatorMode(true);
     if (window.location.hash === '#facilitator') openFacilitatorModal();
   </script>

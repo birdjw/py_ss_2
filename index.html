@@ -132,6 +132,15 @@
     /* Agenda filter */
     .agenda-filter { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
     .agenda-filter .button.active-filter { background: var(--brand); color: white; border-color: transparent; }
+    .collapsible-panel { padding: 0; overflow: hidden; }
+    .collapsible-panel summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 24px; margin: 0; list-style: none; }
+    .collapsible-panel summary::-webkit-details-marker { display: none; }
+    .collapsible-title { display: flex; flex-direction: column; gap: 4px; }
+    .collapsible-title h2 { margin: 0; }
+    .collapsible-note { color: var(--muted); font-size: .92rem; }
+    .collapsible-panel summary::after { content: 'Show'; color: var(--brand-dark); font-weight: 800; }
+    .collapsible-panel[open] summary::after { content: 'Hide'; }
+    .collapsible-body { padding: 0 24px 24px; }
     /* Facilitator timer */
     .timer-widget { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .timer-display { font-size: 1.3rem; font-weight: 900; font-variant-numeric: tabular-nums; min-width: 3.5ch; letter-spacing: -0.02em; }
@@ -218,15 +227,22 @@
       <button id="resetProgress" class="button small" type="button">Reset progress</button>
     </section>
 
-    <section class="panel agenda">
-      <h2>Session map</h2>
-      <div class="agenda-filter" id="agendaFilter">
-        <button class="button small active-filter" data-filter="all" type="button">All</button>
-        <button class="button small" data-filter="concept" type="button">Concepts only</button>
-        <button class="button small" data-filter="exercise" type="button">Exercises only</button>
+    <details class="panel agenda collapsible-panel">
+      <summary>
+        <div class="collapsible-title">
+          <h2>Session map</h2>
+          <span class="collapsible-note">Expand to jump to a concept or exercise.</span>
+        </div>
+      </summary>
+      <div class="collapsible-body">
+        <div class="agenda-filter" id="agendaFilter">
+          <button class="button small active-filter" data-filter="all" type="button">All</button>
+          <button class="button small" data-filter="concept" type="button">Concepts only</button>
+          <button class="button small" data-filter="exercise" type="button">Exercises only</button>
+        </div>
+        <div id="agendaGrid" class="agenda-grid"></div>
       </div>
-      <div id="agendaGrid" class="agenda-grid"></div>
-    </section>
+    </details>
 
     <section id="sections" class="section-list" aria-live="polite"></section>
 
@@ -1144,12 +1160,31 @@
         </article>
       `;
     }
-    function renderSections() {
-      byId('sections').innerHTML = sections.map((section, index) => section.type === 'concept' ? renderConcept(section, index) : renderExercise(section, index)).join('');
+    function getCurrentSectionIndex() {
+      const hash = window.location.hash.replace(/^#/, '');
+      const index = sections.findIndex(section => section.id === hash);
+      return index >= 0 ? index : 0;
+    }
+    function updateActiveAgenda() {
+      const currentSection = sections[getCurrentSectionIndex()];
+      document.querySelectorAll('#agendaGrid .agenda-item').forEach(item => item.classList.remove('active'));
+      if (!currentSection) return;
+      const activeItem = document.querySelector(`#agendaGrid a[href="#${currentSection.id}"]`);
+      if (activeItem) activeItem.classList.add('active');
+    }
+    function renderCurrentSection() {
+      const index = getCurrentSectionIndex();
+      const section = sections[index];
+      byId('sections').innerHTML = section.type === 'concept' ? renderConcept(section, index) : renderExercise(section, index);
       bindControls();
       updateProgressText();
       if (window.Prism) Prism.highlightAll();
-      setupScrollSpy();
+      updateActiveAgenda();
+    }
+    function scrollToSectionContent() {
+      const sectionList = byId('sections');
+      if (!sectionList) return;
+      sectionList.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     function bindControls() {
       document.querySelectorAll('.copy-example').forEach(button => {
@@ -1272,26 +1307,10 @@
     });
     byId('resetProgress').addEventListener('click', () => {
       localStorage.removeItem(STORAGE_KEY);
-      renderSections();
+      renderCurrentSection();
       showToast('Progress reset');
     });
     document.addEventListener('keydown', event => { if (event.key === 'Escape') closeFacilitatorModal(); });
-
-    function setupScrollSpy() {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            document.querySelectorAll('#agendaGrid .agenda-item').forEach(item => item.classList.remove('active'));
-            const activeItem = document.querySelector(`#agendaGrid a[href="#${entry.target.id}"]`);
-            if (activeItem) activeItem.classList.add('active');
-          }
-        });
-      }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
-      sections.forEach(section => {
-        const el = document.getElementById(section.id);
-        if (el) observer.observe(el);
-      });
-    }
     function setupAgendaFilter() {
       document.querySelectorAll('#agendaFilter [data-filter]').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1305,11 +1324,19 @@
         });
       });
     }
+    window.addEventListener('hashchange', () => {
+      if (window.location.hash === '#facilitator') {
+        openFacilitatorModal();
+        return;
+      }
+      renderCurrentSection();
+      scrollToSectionContent();
+    });
     renderAgenda();
-    renderSections();
     setupAgendaFilter();
     if (sessionStorage.getItem(FACILITATOR_KEY) === 'true') setFacilitatorMode(true);
     if (window.location.hash === '#facilitator') openFacilitatorModal();
+    renderCurrentSection();
   </script>
 </body>
 </html>

@@ -345,34 +345,6 @@
         }
     },
     {
-        "type": "concept",
-        "id": "reusing-functions",
-        "title": "Reusing functions",
-        "topic": "Define once, call many times",
-        "time": "4 min",
-        "summary": "A function becomes more useful every time you call it with a new input.",
-        "key_points": [
-            "One function can handle many different inputs.",
-            "The logic stays in one place.",
-            "Changing the function changes every future call.",
-            "This is one of the main reasons functions make programs easier to maintain."
-        ],
-        "callout": "One function handles any price. Change the tax rate in one place and every call uses the new logic.",
-        "examples": [
-            {
-                "title": "Same function, different prices",
-                "code": "def calculate_tax(price):\n    rate = 0.08\n    result = price * rate\n    return result\n\ntax = calculate_tax(49.99)\nprint(tax)\n\ntax = calculate_tax(129.99)\nprint(tax)\n\ntax = calculate_tax(9.99)\nprint(tax)\n"
-            }
-        ],
-        "facilitator": {
-            "talking_points": [
-                "Ask what would happen if the tax rate changed from 8 percent to 9 percent.",
-                "The answer should be: update the function once, not every calculation throughout the file."
-            ],
-            "transition": "Move into the shipping cost practice from the deck."
-        }
-    },
-    {
         "type": "exercise",
         "id": "shipping-cost",
         "title": "Practice: Shipping Cost",

@@ -199,15 +199,6 @@
       </div>
     </section>
 
-    <section class="panel toolbar" aria-label="Session progress">
-      <div class="progress-wrap">
-        <div class="progress-label"><span id="progressText">0 of 0 exercises completed</span></div>
-        <div class="progress-bar"><div id="progressFill"></div></div>
-        <p class="hint">Progress is saved in this browser only. Concept sections do not count toward completion.</p>
-      </div>
-      <button id="resetProgress" class="button small" type="button">Reset progress</button>
-    </section>
-
     <details class="panel agenda collapsible-panel">
       <summary>
         <div class="collapsible-title">
@@ -1177,8 +1168,10 @@
     function updateProgressText() {
       const progress = loadProgress();
       const done = exercises.filter(ex => progress[ex.id]).length;
-      byId('progressText').textContent = `${done} of ${exercises.length} exercises completed`;
-      byId('progressFill').style.width = `${Math.round((done / exercises.length) * 100)}%`;
+      const progressText = byId('progressText');
+      const progressFill = byId('progressFill');
+      if (progressText) progressText.textContent = `${done} of ${exercises.length} exercises completed`;
+      if (progressFill) progressFill.style.width = `${Math.round((done / exercises.length) * 100)}%`;
     }
     function setFacilitatorMode(on) {
       document.body.classList.toggle('facilitator-unlocked', on);
@@ -1264,7 +1257,7 @@
       display.classList.remove('warning', 'expired');
       byId('timerStart').textContent = 'Start';
     });
-    byId('resetProgress').addEventListener('click', () => {
+    byId('resetProgress')?.addEventListener('click', () => {
       localStorage.removeItem(STORAGE_KEY);
       renderCurrentSection();
       showToast('Progress reset');

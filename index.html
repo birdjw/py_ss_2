@@ -91,6 +91,11 @@
     body.facilitator-unlocked .facilitator-only { display: block; }
     .facilitator-panel { border: 2px solid var(--fac-border); background: var(--fac-bg); border-radius: 18px; padding: 18px; margin-top: 18px; }
     .solution-box { margin-top: 14px; }
+    .solution-reveal { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 18px; }
+    .solution-reveal-label { font-weight: 800; margin-bottom: 10px; }
+    .solution-code-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+    .solution-code-row input { min-height: 36px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 10px; font: inherit; font-size: .9rem; width: 140px; }
+    .solution-unlocked { margin-top: 14px; }
     .facilitator-banner { display: none; position: sticky; top: 0; z-index: 10; background: #182848; color: white; padding: 10px 20px; box-shadow: 0 8px 16px rgba(21, 34, 66, 0.18); }
     body.facilitator-unlocked .facilitator-banner { display: block; }
     .facilitator-banner-inner { max-width: 1180px; margin: 0 auto; display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
@@ -241,6 +246,7 @@
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js"></script>
   <script>
     const FACILITATOR_PASSPHRASE = 'facilitator';
+    const SOLUTION_PASSPHRASE = 'reveal';
     const sections = [
     {
         "type": "concept",
@@ -248,7 +254,7 @@
         "title": "Session 1 recap",
         "topic": "Python basics we are building on",
         "time": "6 min",
-        "summary": "Before moving deeper into functions, review the core ideas from last session: console output, variables, math, comments, types, strings, None, and the first look at reusable functions.",
+        "summary": "Last week, we covered console output, variables, math, comments, types, strings, the noneType, and our first look at reusable functions. Up next we'll be taking a closer look at functions in Python.",
         "key_points": [
             "Code runs in order from top to bottom.",
             "print() sends information to the console so we can see what happened.",
@@ -406,7 +412,7 @@
         "time": "7 min",
         "goal": "Calculate total revenue from three sales channels.",
         "predict": "What should Q1 revenue be for 12000, 8500, and 4200?",
-        "task": "Complete total_revenue by returning the sum of its three parameters.",
+        "task": "Complete the total_revenue function.",
         "starter": "def total_revenue(channel_one, channel_two, channel_three):\n    pass          # <-- replace with your code\n\n# Don't touch below this line\n# Q1 revenue by channel\nonline = 12000\nretail = 8500\nwholesale = 4200\nq1_revenue = total_revenue(online, retail, wholesale)\nprint(\"Revenue from\", online, retail, \"and\", wholesale, \"...\")\nprint(q1_revenue, \"total Q1 revenue!\")\nprint(\"=====================================\")\n# Q2 revenue by channel\nonline2 = 15000\nretail2 = 9200\nwholesale2 = 5100\nq2_revenue = total_revenue(online2, retail2, wholesale2)\nprint(\"Revenue from\", online2, retail2, \"and\", wholesale2, \"...\")\nprint(q2_revenue, \"total Q2 revenue!\")\n",
         "solution": "def total_revenue(channel_one, channel_two, channel_three):\n    return channel_one + channel_two + channel_three\n\n# Don't touch below this line\n# Q1 revenue by channel\nonline = 12000\nretail = 8500\nwholesale = 4200\nq1_revenue = total_revenue(online, retail, wholesale)\nprint(\"Revenue from\", online, retail, \"and\", wholesale, \"...\")\nprint(q1_revenue, \"total Q1 revenue!\")\nprint(\"=====================================\")\n# Q2 revenue by channel\nonline2 = 15000\nretail2 = 9200\nwholesale2 = 5100\nq2_revenue = total_revenue(online2, retail2, wholesale2)\nprint(\"Revenue from\", online2, retail2, \"and\", wholesale2, \"...\")\nprint(q2_revenue, \"total Q2 revenue!\")\n",
         "facilitator": {
@@ -989,7 +995,7 @@
         <a class="agenda-item" href="#${section.id}">
           <span class="tag ${section.type === 'exercise' ? 'exercise' : ''}">${section.type === 'exercise' ? 'Exercise' : 'Concept'}</span>
           <strong>${index + 1}. ${escapeHtml(section.title)}</strong>
-          <span>${escapeHtml(section.topic)} &bull; ${escapeHtml(section.time)}</span>
+          <span>${escapeHtml(section.topic)}</span>
         </a>
       `).join('');
     }
@@ -1015,7 +1021,6 @@
               <h2>${escapeHtml(section.title)}</h2>
               <p class="summary">${escapeHtml(section.summary)}</p>
             </div>
-            <div class="meta-pill">${escapeHtml(section.time)}</div>
           </div>
           <div class="concept-grid">
             <div>
@@ -1048,10 +1053,8 @@
               <h2>${escapeHtml(section.title)}</h2>
               <p class="goal">${escapeHtml(section.goal)}</p>
             </div>
-            <div class="meta-pill">${escapeHtml(section.time)}</div>
           </div>
 
-          <div class="predict-box"><strong>Predict:</strong> ${escapeHtml(section.predict)}<textarea class="predict-input" placeholder="Write your prediction here before running the code…" rows="2" aria-label="Your prediction"></textarea></div>
           <div class="task-box"><strong>Your task:</strong> ${escapeHtml(section.task)}</div>
 
           <div class="button-row">
@@ -1064,6 +1067,24 @@
             <summary>Starter code</summary>
             <pre><code class="language-python">${escapeHtml(section.starter)}</code></pre>
           </details>
+
+          <div class="solution-reveal" data-section-index="${index}">
+            <p class="solution-reveal-label">Solution</p>
+            <div class="solution-locked">
+              <form class="solution-form" data-section-index="${index}">
+                <label class="hint">Enter the code to reveal the solution.</label>
+                <div class="solution-code-row">
+                  <input type="password" class="solution-code-input" placeholder="Code…" autocomplete="off" aria-label="Solution code" />
+                  <button class="button small primary" type="submit">Reveal solution</button>
+                </div>
+                <div class="solution-error error"></div>
+              </form>
+            </div>
+            <div class="solution-unlocked" hidden>
+              <div class="button-row"><button class="button small copy-solution" type="button" data-section-index="${index}">Copy solution code</button></div>
+              <pre><code class="language-python">${escapeHtml(section.solution)}</code></pre>
+            </div>
+          </div>
 
           <section class="facilitator-only facilitator-panel" aria-label="Facilitator content for ${escapeHtml(section.title)}">
             <h3>Facilitator notes</h3>
@@ -1126,6 +1147,24 @@
         button.addEventListener('click', () => {
           const section = sections[Number(button.dataset.sectionIndex)];
           copyText(section.solution).then(() => { showToast('Solution code copied'); flashButton(button, 'Copy solution code'); });
+        });
+      });
+      document.querySelectorAll('.solution-form').forEach(form => {
+        form.addEventListener('submit', event => {
+          event.preventDefault();
+          const input = form.querySelector('.solution-code-input');
+          const errorEl = form.querySelector('.solution-error');
+          if (normalizePassphrase(input.value) === normalizePassphrase(SOLUTION_PASSPHRASE)) {
+            const reveal = form.closest('.solution-reveal');
+            reveal.querySelector('.solution-locked').hidden = true;
+            const unlocked = reveal.querySelector('.solution-unlocked');
+            unlocked.hidden = false;
+            if (window.Prism) Prism.highlightAllUnder(unlocked);
+          } else {
+            errorEl.textContent = 'Incorrect code.';
+            input.value = '';
+            input.focus();
+          }
         });
       });
       document.querySelectorAll('input[data-progress-id]').forEach(input => {

@@ -253,7 +253,7 @@
         "title": "Session 1 recap",
         "topic": "Python basics we are building on",
         "time": "6 min",
-        "summary": "Last week, we covered console output, variables, math, comments, types, strings, the noneType, and our first look at reusable functions. Up next we'll be taking a closer look at functions in Python.",
+        "summary": "Last session, we covered console output, variables, math, comments, types, strings, the noneType, and our first look at reusable functions. Up next we'll be taking a closer look at functions in Python.",
         "key_points": [
             "Code runs in order from top to bottom.",
             "print() sends information to the console so we can see what happened.",
@@ -652,8 +652,8 @@
         "goal": "Complete two functions that use default deductions.",
         "predict": "If deductions is not provided, what value does Python use?",
         "task": "Complete both functions so deductions defaults to 0 and reduces the expense amount.",
-        "starter": "def apply_operating_costs(revenue, deductions=0):\n    # 1. Set deductions default to 0\n    # 2. damage = 500 minus the deductions\n    # 3. new_revenue = revenue minus damage\n    # 4. Return new_revenue\n    pass\n\ndef apply_tax_burden(revenue, deductions=0):\n    # 1. Set deductions default to 0\n    # 2. damage = 1000 minus the deductions\n    # 3. new_revenue = revenue minus damage\n    # 4. Return new_revenue\n    pass\n",
-        "solution": "def apply_operating_costs(revenue, deductions=0):\n    damage = 500 - deductions\n    new_revenue = revenue - damage\n    return new_revenue\n\ndef apply_tax_burden(revenue, deductions=0):\n    damage = 1000 - deductions\n    new_revenue = revenue - damage\n    return new_revenue\n",
+        "starter": "def apply_operating_costs(revenue, deductions=0):\n    # 1. Set deductions default to 0\n    # 2. damage = 500 minus the deductions\n    # 3. new_revenue = revenue minus damage\n    # 4. Return new_revenue\n    pass\n\ndef apply_tax_burden(revenue, deductions=0):\n    # 1. Set deductions default to 0\n    # 2. damage = 1000 minus the deductions\n    # 3. new_revenue = revenue minus damage\n    # 4. Return new_revenue\n    pass\n\nprint(apply_operating_costs(5000))\nprint(apply_operating_costs(5000, 200))\nprint(apply_tax_burden(5000))\nprint(apply_tax_burden(5000, 300))\n",
+        "solution": "def apply_operating_costs(revenue, deductions=0):\n    damage = 500 - deductions\n    new_revenue = revenue - damage\n    return new_revenue\n\ndef apply_tax_burden(revenue, deductions=0):\n    damage = 1000 - deductions\n    new_revenue = revenue - damage\n    return new_revenue\n\nprint(apply_operating_costs(5000))\nprint(apply_operating_costs(5000, 200))\nprint(apply_tax_burden(5000))\nprint(apply_tax_burden(5000, 300))\n",
         "facilitator": {
             "rhythm": "This exercise is from the slide deck and does not include print calls. If desired, add a quick live call after they finish, such as print(apply_operating_costs(5000)).",
             "predict_answer": "Python uses the default value 0 when deductions is omitted.",
@@ -674,8 +674,8 @@
         "goal": "Return two discounted prices from one function.",
         "predict": "Which discount should produce the lower final price: standard or premium?",
         "task": "Calculate standard_discount and premium_discount, then return both values.",
-        "starter": "def apply_discount(original_price):\n    # A premium discount is stronger than standard\n    # standard = 50% of original price\n    # premium  = 25% of original price\n    pass          # <-- return both values\n\n\n# Tip: multiply by a decimal to get a percentage\n# e.g. 30% of 50 is 50 * 0.3\n",
-        "solution": "def apply_discount(original_price):\n    # A premium discount is stronger than standard\n    # standard = 50% of original price\n    # premium  = 25% of original price\n    standard_discount = original_price * 0.50\n    premium_discount = original_price * 0.25\n    return standard_discount, premium_discount\n\n\n# Tip: multiply by a decimal to get a percentage\n# e.g. 30% of 50 is 50 * 0.3\n",
+        "starter": "def apply_discount(original_price):\n    # A premium discount is stronger than standard\n    # standard = 50% of original price\n    # premium  = 25% of original price\n    pass          # <-- return both values\n\n\n# Tip: multiply by a decimal to get a percentage\n# e.g. 30% of 50 is 50 * 0.3\n\nstandard, premium = apply_discount(100)\nprint(standard)\nprint(premium)\n",
+        "solution": "def apply_discount(original_price):\n    # A premium discount is stronger than standard\n    # standard = 50% of original price\n    # premium  = 25% of original price\n    standard_discount = original_price * 0.50\n    premium_discount = original_price * 0.25\n    return standard_discount, premium_discount\n\n\n# Tip: multiply by a decimal to get a percentage\n# e.g. 30% of 50 is 50 * 0.3\n\nstandard, premium = apply_discount(100)\nprint(standard)\nprint(premium)\n",
         "facilitator": {
             "rhythm": "This mirrors the deck exactly, including the percentage hint. If learners need a runnable check, add print(apply_discount(100)) after the function.",
             "predict_answer": "Premium should produce the lower final price because it reduces the price to 25% of the original.",
